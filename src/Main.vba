@@ -1,5 +1,25 @@
 Option Explicit
 
+Sub Show(Cells() As Boolean, Width As Integer, Height As Integer, SheetName As String)
+    Dim sheet As Worksheet
+    Set sheet = Worksheets(SheetName)
+    sheet.Activate
+
+    Dim row As Integer
+    Dim col As Integer
+    For row = 1 To Height
+        For col = 1 To Width
+            Dim idx As Integer
+            idx = (row - 1) * Width + (col - 1)
+            If Cells(idx) Then
+                sheet.Cells(row, col).Interior.Color = RGB(0, 0, 0)
+            Else
+                sheet.Cells(row, col).Interior.Color = RGB(255, 255, 255)
+            End If
+        Next col
+    Next row
+End Sub
+
 Sub LifeGame()
     Dim Width As Integer
     Dim Height As Integer
@@ -50,16 +70,5 @@ Sub LifeGame()
     sheet.Range(Columns(1), Columns(Width)).ColumnWidth = 0.77
 
     ' セル一覧をループしてセルの背景色を設定
-    Dim row As Integer
-    Dim col As Integer
-    For row = 1 To Height
-        For col = 1 To Width
-            idx = (row - 1) * Width + (col - 1)
-            If Cells(idx) Then
-                sheet.Cells(row, col).Interior.Color = RGB(0, 0, 0)
-            Else
-                sheet.Cells(row, col).Interior.Color = RGB(255, 255, 255)
-            End If
-        Next col
-    Next row
+    Call Show(Cells, Width, Height, SheetName)
 End Sub
