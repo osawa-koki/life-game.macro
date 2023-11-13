@@ -69,6 +69,8 @@ Sub LifeGame()
     sheet.Range(Rows(1), Rows(Height)).RowHeight = 7.5
     sheet.Range(Columns(1), Columns(Width)).ColumnWidth = 0.77
 
+    Application.Wait Now() + TimeValue("00:00:01")
+
     ' セル一覧をループしてセルの背景色を設定
     Call Show(Cells, Width, Height, SheetName)
 End Sub
