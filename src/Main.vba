@@ -48,4 +48,18 @@ Sub LifeGame()
     ' 行と列のサイズを設定
     sheet.Range(Rows(1), Rows(Height)).RowHeight = 7.5
     sheet.Range(Columns(1), Columns(Width)).ColumnWidth = 0.77
+
+    ' セル一覧をループしてセルの背景色を設定
+    Dim row As Integer
+    Dim col As Integer
+    For row = 1 To Height
+        For col = 1 To Width
+            idx = (row - 1) * Width + (col - 1)
+            If Cells(idx) Then
+                sheet.Cells(row, col).Interior.Color = RGB(0, 0, 0)
+            Else
+                sheet.Cells(row, col).Interior.Color = RGB(255, 255, 255)
+            End If
+        Next col
+    Next row
 End Sub
