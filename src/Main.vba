@@ -103,7 +103,7 @@ Sub LifeGame()
     generation = 0
     Do
         sheet.Name = SheetName & "(" & generation & ")"
-        Call Show(Cells, Width, Height, SheetName)
+        Call Show(Cells, Width, Height, sheet)
         generation = generation + 1
         Dim new_cells() As Boolean
         ReDim new_cells(0 To Width * Height - 1)
