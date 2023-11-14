@@ -1,10 +1,37 @@
 Option Explicit
 
-Sub Show(Cells() As Boolean, Width As Integer, Height As Integer, SheetName As String)
-    Dim sheet As Worksheet
-    Set sheet = Worksheets(SheetName)
-    sheet.Activate
+Function LiveNeighborCount(row As Integer, Column As Integer, Width As Integer, Height As Integer, Cells() As Boolean) As Integer
+    Dim count As Integer
+    count = 0
+    Dim delta_row As Variant
+    Dim tmp_array() As Variant
+    tmp_array = Array(-1, 0, 1)
 
+    For Each delta_row In tmp_array
+        Dim delta_col As Variant
+        For Each delta_col In tmp_array
+            If delta_row = 0 And delta_col = 0 Then
+                GoTo NextLoop
+            End If
+
+            Dim neighbor_row As Integer
+            neighbor_row = (row + delta_row) Mod Height
+            Dim neighbor_col As Integer
+            neighbor_col = (Column + delta_col) Mod Width
+            Dim idx As Integer
+            idx = (neighbor_row - 1) * Width + (neighbor_col - 1)
+            If idx >= 0 And idx < UBound(Cells) Then
+                If Cells(idx) Then
+                    count = count + 1
+                End If
+            End If
+NextLoop:
+        Next delta_col
+    Next delta_row
+    LiveNeighborCount = count
+End Function
+
+Sub Show(Cells() As Boolean, Width As Integer, Height As Integer, sheet As Worksheet)
     Dim row As Integer
     Dim col As Integer
     For row = 1 To Height
@@ -71,6 +98,38 @@ Sub LifeGame()
 
     Application.Wait Now() + TimeValue("00:00:01")
 
-    ' セル一覧をループしてセルの背景色を設定
-    Call Show(Cells, Width, Height, SheetName)
+    Dim neighbor_count As Integer
+    Dim generation As Integer
+    generation = 0
+    Do
+        sheet.Name = SheetName & "(" & generation & ")"
+        Call Show(Cells, Width, Height, SheetName)
+        generation = generation + 1
+        Dim new_cells() As Boolean
+        ReDim new_cells(0 To Width * Height - 1)
+        Dim row As Integer
+        For row = 1 To Height
+            Dim col As Integer
+            For col = 1 To Width
+                idx = (row - 1) * Width + (col - 1)
+                cell = Cells(idx)
+                neighbor_count = LiveNeighborCount(row, col, Width, Height, Cells)
+                If cell Then
+                    If neighbor_count = 2 Or neighbor_count = 3 Then
+                        new_cells(idx) = True
+                    Else
+                        new_cells(idx) = False
+                    End If
+                Else
+                    If neighbor_count = 3 Then
+                        new_cells(idx) = True
+                    Else
+                        new_cells(idx) = False
+                    End If
+                End If
+            Next col
+        Next row
+        Cells = new_cells
+        Application.Wait Now() + TimeValue("00:00:01")
+    Loop
 End Sub
